@@ -669,16 +669,11 @@ h1 {
   position: absolute;
   top: 50%;
   left: calc(100% - var(--progress));
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border-radius: 50%;
-  color: #ffffff;
-  background: linear-gradient(135deg, var(--purple), var(--pink-dark));
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
   box-shadow: 0 8px 18px rgba(82, 50, 126, 0.24);
-  font-size: 1.25rem;
-  line-height: 1;
+  object-fit: contain;
   transform: translate(-50%, -50%);
   transition: left 300ms ease;
 }
@@ -783,8 +778,7 @@ h1 {
   gap: 12px;
 }
 
-.progress-unicorn-start,
-.progress-princess {
+.progress-unicorn-start {
   display: grid;
   width: 34px;
   height: 34px;
@@ -794,13 +788,6 @@ h1 {
   background: #ffffff;
   box-shadow: 0 8px 18px rgba(82, 50, 126, 0.12);
   font-size: 1.4rem;
-}
-
-.progress-princess-image {
-  width: 28px;
-  height: 28px;
-  border-radius: 9px;
-  object-fit: contain;
 }
 
 .progress-path {
@@ -827,14 +814,17 @@ h1 {
   transition: width 300ms ease;
 }
 
-.progress-unicorn {
+.progress-princess-marker {
   position: absolute;
   top: 50%;
   left: var(--progress);
   z-index: 1;
-  font-size: 1.9rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   filter: drop-shadow(0 8px 10px rgba(82, 50, 126, 0.2));
-  transform: translate(-50%, -52%);
+  object-fit: contain;
+  transform: translate(-50%, -50%);
   transition: left 300ms ease;
 }
 

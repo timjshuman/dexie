@@ -919,7 +919,13 @@ export default function Home() {
             <div className="scene-progress-arrow" style={progressStyle}>
               <span className="scene-progress-line">
                 <span className="scene-progress-fill" />
-                <span className="scene-progress-marker">⬅</span>
+                <Image
+                  alt="Princess progress marker"
+                  className="scene-progress-marker"
+                  height={42}
+                  src="/princess-current.png"
+                  width={42}
+                />
               </span>
             </div>
             <div className="unicorn">🦄</div>
@@ -966,20 +972,15 @@ export default function Home() {
                 className="progress-track"
                 role="progressbar"
               >
-                <span className="progress-princess" aria-label="Princess">
+                <span className="progress-path">
+                  <span className="progress-fill" />
                   <Image
-                    alt=""
-                    className="progress-princess-image"
+                    alt="Princess progress marker"
+                    className="progress-princess-marker"
                     height={32}
                     src="/princess-current.png"
                     width={32}
                   />
-                </span>
-                <span className="progress-path">
-                  <span className="progress-fill" />
-                  <span className="progress-unicorn" aria-hidden="true">
-                    🦄
-                  </span>
                 </span>
                 <span className="progress-unicorn-start" aria-label="Unicorn">
                   🦄
