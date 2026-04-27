@@ -756,7 +756,7 @@ export default function Home() {
           <p className="eyebrow">Everette&apos;s Princess Land Spelling Quest</p>
           <h1 className="sparkle-title" id="game-title">
             <span aria-hidden="true">✦</span>
-            Help the unicorn unlock castle words
+            Save the Unicorn by unlocking castle words
             <span aria-hidden="true">✦</span>
           </h1>
           <p className="intro">
