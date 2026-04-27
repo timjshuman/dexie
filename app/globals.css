@@ -1207,6 +1207,27 @@ h1 {
     padding: 14px 18px;
   }
 
+  .sparkle-title {
+    display: block;
+    width: 100%;
+    overflow: visible;
+    line-height: 1.08;
+    white-space: normal;
+  }
+
+  .sparkle-title span:first-child {
+    margin-right: 0.25em;
+  }
+
+  .sparkle-title span:last-child {
+    margin-left: 0.25em;
+  }
+
+  .intro {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
   .score-board {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1253,6 +1274,10 @@ h1 {
 
   h1 {
     font-size: clamp(0.9rem, 5.8vw, 1.8rem);
+  }
+
+  .eyebrow {
+    overflow-wrap: anywhere;
   }
 
   .word-display {
