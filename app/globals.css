@@ -521,11 +521,11 @@ h1 {
 .scene-progress-fill {
   position: absolute;
   top: 50%;
-  left: 0;
+  right: 0;
   width: var(--progress);
   height: 8px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--pink), var(--gold), var(--mint));
+  background: linear-gradient(270deg, var(--pink), var(--gold), var(--mint));
   transform: translateY(-50%);
   transition: width 300ms ease;
 }
@@ -533,7 +533,7 @@ h1 {
 .scene-progress-marker {
   position: absolute;
   top: 50%;
-  left: var(--progress);
+  left: calc(100% - var(--progress));
   display: grid;
   width: 34px;
   height: 34px;
