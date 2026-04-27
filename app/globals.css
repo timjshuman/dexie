@@ -474,7 +474,8 @@ h1 {
 .princess-image {
   position: absolute;
   bottom: 22px;
-  left: 28px;
+  left: auto;
+  right: 24px;
   z-index: 3;
   width: clamp(3.35rem, 6.35vw, 4.75rem);
   height: clamp(3.35rem, 6.35vw, 4.75rem);
@@ -484,14 +485,15 @@ h1 {
 }
 
 .unicorn {
-  right: 24px;
+  right: auto;
+  left: 28px;
 }
 
 .scene-progress-arrow {
   position: absolute;
-  right: 92px;
+  right: 96px;
   bottom: 46px;
-  left: 96px;
+  left: 92px;
   z-index: 2;
   height: 26px;
   pointer-events: none;
@@ -519,7 +521,7 @@ h1 {
 .scene-progress-fill {
   position: absolute;
   top: 50%;
-  right: 0;
+  left: 0;
   width: var(--progress);
   height: 8px;
   border-radius: 999px;
@@ -531,7 +533,7 @@ h1 {
 .scene-progress-marker {
   position: absolute;
   top: 50%;
-  left: calc(100% - var(--progress));
+  left: var(--progress);
   display: grid;
   width: 34px;
   height: 34px;
@@ -646,7 +648,7 @@ h1 {
   gap: 12px;
 }
 
-.progress-castle,
+.progress-unicorn-start,
 .progress-princess {
   display: grid;
   width: 34px;

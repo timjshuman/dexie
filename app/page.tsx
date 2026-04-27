@@ -942,8 +942,8 @@ export default function Home() {
                 className="progress-track"
                 role="progressbar"
               >
-                <span className="progress-castle" aria-hidden="true">
-                  🏰
+                <span className="progress-unicorn-start" aria-label="Unicorn">
+                  🦄
                 </span>
                 <span className="progress-path">
                   <span className="progress-fill" />
