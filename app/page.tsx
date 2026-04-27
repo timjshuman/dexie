@@ -956,15 +956,6 @@ export default function Home() {
                 className="progress-track"
                 role="progressbar"
               >
-                <span className="progress-unicorn-start" aria-label="Unicorn">
-                  🦄
-                </span>
-                <span className="progress-path">
-                  <span className="progress-fill" />
-                  <span className="progress-unicorn" aria-hidden="true">
-                    🦄
-                  </span>
-                </span>
                 <span className="progress-princess" aria-label="Princess">
                   <Image
                     alt=""
@@ -973,6 +964,15 @@ export default function Home() {
                     src="/princess-current.png"
                     width={32}
                   />
+                </span>
+                <span className="progress-path">
+                  <span className="progress-fill" />
+                  <span className="progress-unicorn" aria-hidden="true">
+                    🦄
+                  </span>
+                </span>
+                <span className="progress-unicorn-start" aria-label="Unicorn">
+                  🦄
                 </span>
               </div>
             </div>
