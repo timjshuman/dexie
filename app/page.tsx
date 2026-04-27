@@ -589,6 +589,17 @@ const challengeBank: Challenge[] = [
   ...additionalChallengeSeeds.map(makeChallenge),
 ];
 
+function shuffleLetters(letters: string[]) {
+  const shuffled = [...letters];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
 function createChallengeSet() {
   const shuffled = [...challengeBank];
 
@@ -597,7 +608,10 @@ function createChallengeSet() {
     [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
   }
 
-  return shuffled.slice(0, CHALLENGE_COUNT);
+  return shuffled.slice(0, CHALLENGE_COUNT).map((challenge) => ({
+    ...challenge,
+    choices: shuffleLetters(challenge.choices),
+  }));
 }
 
 function getRandomGift(earnedGifts: Gift[]) {
@@ -760,7 +774,7 @@ export default function Home() {
             <span aria-hidden="true">✦</span>
           </h1>
           <p className="intro">
-            It is up to you Evie to help the unicorn unlock the castle words and get back to you. You can do it!
+            It is up to you Evie to help save the Unicorn and unlock the castle words. You can do it!
           </p>
         </div>
 
