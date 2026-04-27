@@ -881,6 +881,12 @@ export default function Home() {
         <section className="quest-card" aria-live="polite">
           <div className="scene" aria-hidden="true">
             <div className="castle">
+              <div className="castle-wing left-wing">
+                <span className="wing-window" />
+              </div>
+              <div className="castle-wing right-wing">
+                <span className="wing-window" />
+              </div>
               <div className="tower left-tower">
                 <span className="flag" />
                 <span className="castle-window" />
@@ -894,7 +900,11 @@ export default function Home() {
               <div className="keep">
                 <span className="flag center-flag" />
                 <span>♕</span>
+                <div className="castle-banner left-banner" />
+                <div className="castle-banner right-banner" />
                 <div className="castle-balcony" />
+                <div className="keep-window left-keep-window" />
+                <div className="keep-window right-keep-window" />
                 <div className="castle-gate" />
               </div>
             </div>
