@@ -1175,6 +1175,29 @@ h1 {
 }
 
 @media (max-width: 860px) {
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: auto;
+  }
+
+  .game-shell {
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
+  @supports (min-height: 100dvh) {
+    .game-shell {
+      min-height: 100dvh;
+    }
+  }
+
   .quest-card,
   .celebration-card {
     grid-template-columns: 1fr;
