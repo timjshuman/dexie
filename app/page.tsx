@@ -929,7 +929,7 @@ export default function Home() {
 
             <div className="quest-progress" style={progressStyle}>
               <div className="progress-label">
-                <span>Unicorn journey</span>
+                <span>Evie&apos;s Journey</span>
                 <strong>
                   {challengeIndex + 1}/{challenges.length}
                 </strong>
