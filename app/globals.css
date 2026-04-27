@@ -1257,8 +1257,11 @@ h1 {
 
   .word-display {
     padding: 10px;
-    font-size: clamp(1.35rem, 8vw, 2.2rem);
-    letter-spacing: 0.1em;
+    font-size: clamp(1.2rem, 7vw, 2rem);
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   .letter-button {
