@@ -76,6 +76,90 @@ button {
   display: none;
 }
 
+.login-shell {
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+}
+
+.login-card {
+  position: relative;
+  width: min(760px, 100%);
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 34px;
+  padding: clamp(24px, 5vw, 48px);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.login-card .sparkle-title {
+  margin-bottom: 14px;
+  white-space: normal;
+}
+
+.login-form {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+  margin-top: 22px;
+}
+
+.login-form label {
+  color: var(--pink-dark);
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.login-form input {
+  border: 3px solid rgba(123, 97, 255, 0.18);
+  border-radius: 18px;
+  padding: 14px 16px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 800;
+  outline: none;
+}
+
+.login-form input:focus {
+  border-color: rgba(123, 97, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(123, 97, 255, 0.12);
+}
+
+.login-error {
+  margin: 0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  color: #9c2f4f;
+  background: #fff0f5;
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.create-player-link {
+  justify-self: start;
+  border: 0;
+  padding: 0;
+  color: var(--purple);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.create-player-link:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
 .hero-card,
 .quest-card {
   position: relative;
@@ -188,6 +272,35 @@ button {
 .reset-link:hover {
   background: #ffffff;
   transform: translateY(-2px);
+}
+
+.player-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.64);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.player-badge strong {
+  color: var(--purple);
+}
+
+.player-badge button {
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: #ffffff;
+  background: var(--purple);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .eyebrow,
