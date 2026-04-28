@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { type CSSProperties, type FormEvent, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 
 type Challenge = {
   word: string;
@@ -16,13 +16,6 @@ type Challenge = {
 type Gift = {
   name: string;
   emoji: string;
-};
-
-type PlayerProgress = {
-  name: string;
-  level: number;
-  score: number;
-  earnedGifts: Gift[];
 };
 
 const CHALLENGE_COUNT = 10;
@@ -653,67 +646,6 @@ function speak(text: string) {
   window.speechSynthesis.speak(utterance);
 }
 
-function normalizePlayerName(name: string) {
-  return name.trim().replace(/\s+/g, " ");
-}
-
-function playerApiUrl(playerName: string) {
-  return `/api/players/${encodeURIComponent(playerName)}`;
-}
-
-async function fetchPlayerProgress(playerName: string) {
-  const response = await fetch(playerApiUrl(playerName));
-
-  if (response.status === 404) {
-    return null;
-  }
-
-  if (!response.ok) {
-    throw new Error("Unable to load player.");
-  }
-
-  const data = (await response.json()) as { player: PlayerProgress };
-  return data.player;
-}
-
-async function createStoredPlayer(playerName: string) {
-  const response = await fetch("/api/players", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name: playerName }),
-  });
-
-  if (response.status === 409) {
-    return null;
-  }
-
-  if (!response.ok) {
-    throw new Error("Unable to create player.");
-  }
-
-  const data = (await response.json()) as { player: PlayerProgress };
-  return data.player;
-}
-
-async function saveStoredPlayerProgress(
-  playerName: string,
-  progress: Omit<PlayerProgress, "name">,
-) {
-  const response = await fetch(playerApiUrl(playerName), {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(progress),
-  });
-
-  if (!response.ok) {
-    throw new Error("Unable to save player progress.");
-  }
-}
-
 export default function Home() {
   const [challenges, setChallenges] = useState<Challenge[]>(() =>
     challengeBank.slice(0, CHALLENGE_COUNT),
@@ -729,10 +661,6 @@ export default function Home() {
   const [successBurst, setSuccessBurst] = useState(0);
   const [earnedGifts, setEarnedGifts] = useState<Gift[]>([]);
   const [awardedGift, setAwardedGift] = useState<Gift | null>(null);
-  const [playerName, setPlayerName] = useState<string | null>(null);
-  const [loginName, setLoginName] = useState("");
-  const [loginError, setLoginError] = useState("");
-  const [authMode, setAuthMode] = useState<"login" | "create">("login");
 
   useEffect(() => {
     const randomizeAfterHydration = window.setTimeout(() => {
@@ -741,20 +669,6 @@ export default function Home() {
 
     return () => window.clearTimeout(randomizeAfterHydration);
   }, []);
-
-  useEffect(() => {
-    if (!playerName) {
-      return;
-    }
-
-    void saveStoredPlayerProgress(playerName, {
-      level,
-      score,
-      earnedGifts,
-    }).catch(() => {
-      setLoginError("We could not save progress. Please try again.");
-    });
-  }, [earnedGifts, level, playerName, score]);
 
   const challenge = challenges[challengeIndex];
   const correctLetter = challenge.word[challenge.missingIndex];
@@ -832,81 +746,6 @@ export default function Home() {
     setSelectedLetter(null);
   }
 
-  function applyPlayerProgress(progress: PlayerProgress) {
-    const normalizedName = normalizePlayerName(progress.name);
-
-    setPlayerName(normalizedName);
-    setLoginName(normalizedName);
-    setLoginError("");
-    setAuthMode("login");
-    setLevel(Math.min(Math.max(progress.level ?? 1, 1), MAX_LEVEL));
-    setScore(Math.max(progress.score ?? 0, 0));
-    setEarnedGifts(
-      (progress.earnedGifts ?? []).filter((gift) => gifts.some(({ name }) => name === gift.name)),
-    );
-    setChallengeIndex(0);
-    setSelectedLetter(null);
-    setShowWord(false);
-    setGameComplete(false);
-    setCompletedLevel(null);
-    setAwardedGift(null);
-    setSuccessBurst(0);
-  }
-
-  async function loadPlayer(name: string) {
-    const normalizedName = normalizePlayerName(name);
-
-    if (!normalizedName) {
-      return;
-    }
-
-    const progress = await fetchPlayerProgress(normalizedName);
-
-    if (!progress) {
-      setLoginError(`Player "${normalizedName}" does not exist. Choose Create Player to make one.`);
-      return;
-    }
-
-    applyPlayerProgress(progress);
-  }
-
-  async function loginPlayer(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const normalizedName = normalizePlayerName(loginName);
-
-    if (!normalizedName) {
-      return;
-    }
-
-    try {
-      await loadPlayer(normalizedName);
-    } catch {
-      setLoginError("We could not log in right now. Please try again.");
-    }
-  }
-
-  async function createPlayer(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const normalizedName = normalizePlayerName(loginName);
-
-    if (!normalizedName) {
-      return;
-    }
-
-    try {
-      const player = await createStoredPlayer(normalizedName);
-
-      if (!player) {
-        setLoginError(`Player "${normalizedName}" already exists. Press Start quest to log in.`);
-        return;
-      }
-
-      applyPlayerProgress(player);
-    } catch {
-      setLoginError("We could not create that player right now. Please try again.");
-    }
-  }
-
   function startNextQuest() {
     setChallenges(createChallengeSet());
     setChallengeIndex(0);
@@ -916,100 +755,6 @@ export default function Home() {
     setCompletedLevel(null);
     setAwardedGift(null);
     setSuccessBurst(0);
-  }
-
-  if (!playerName && authMode === "create") {
-    return (
-      <main className="game-shell login-shell">
-        <section className="login-card" aria-labelledby="create-player-title">
-          <p className="eyebrow">Create Player</p>
-          <h1 className="sparkle-title" id="create-player-title">
-            Start a new princess quest
-          </h1>
-          <p className="intro">Choose a player name to begin saving your stars and gifts.</p>
-          <form className="login-form" onSubmit={createPlayer}>
-            <label htmlFor="new-player-name">Player name</label>
-            <input
-              autoComplete="given-name"
-              id="new-player-name"
-              maxLength={24}
-              onChange={(event) => {
-                setLoginName(event.target.value);
-                setLoginError("");
-              }}
-              placeholder="Player Name"
-              type="text"
-              value={loginName}
-            />
-            {loginError && (
-              <p className="login-error" role="alert">
-                {loginError}
-              </p>
-            )}
-            <button className="primary-button" disabled={!normalizePlayerName(loginName)} type="submit">
-              Create Player
-            </button>
-            <button
-              className="create-player-link"
-              onClick={() => {
-                setAuthMode("login");
-                setLoginError("");
-              }}
-              type="button"
-            >
-              Log in
-            </button>
-          </form>
-        </section>
-      </main>
-    );
-  }
-
-  if (!playerName) {
-    return (
-      <main className="game-shell login-shell">
-        <section className="login-card" aria-labelledby="login-title">
-          <p className="eyebrow">Player Login</p>
-          <h1 className="sparkle-title" id="login-title">
-            Save the Unicorn by unlocking castle words
-          </h1>
-          <p className="intro">Enter your player name to save your score and gifts.</p>
-          <form className="login-form" onSubmit={loginPlayer}>
-            <label htmlFor="player-name">Player name</label>
-            <input
-              autoComplete="given-name"
-              id="player-name"
-              maxLength={24}
-              onChange={(event) => {
-                setLoginName(event.target.value);
-                setLoginError("");
-              }}
-              placeholder="Player Name"
-              type="text"
-              value={loginName}
-            />
-            {loginError && (
-              <p className="login-error" role="alert">
-                {loginError}
-              </p>
-            )}
-            <button className="primary-button" disabled={!normalizePlayerName(loginName)} type="submit">
-              Start quest
-            </button>
-            <button
-              className="create-player-link"
-              onClick={() => {
-                setAuthMode("create");
-                setLoginError("");
-              }}
-              type="button"
-            >
-              Create Player
-            </button>
-          </form>
-        </section>
-      </main>
-    );
   }
 
   return (
@@ -1034,16 +779,13 @@ export default function Home() {
             RESET
           </Link>
           <p className="eyebrow">Everette&apos;s Princess Land Spelling Quest</p>
-          <p className="player-badge">
-            Player: <strong>{playerName}</strong>
-          </p>
           <h1 className="sparkle-title" id="game-title">
             <span aria-hidden="true">✦</span>
             Save the Unicorn by unlocking castle words
             <span aria-hidden="true">✦</span>
           </h1>
           <p className="intro">
-            It is up to you {playerName} to help save the Unicorn and unlock the castle words. You can do it!
+            It is up to you Evie to help save the Unicorn and unlock the castle words. You can do it!
           </p>
         </div>
 
@@ -1228,7 +970,7 @@ export default function Home() {
 
             <div className="quest-progress" style={progressStyle}>
               <div className="progress-label">
-                <span>{playerName}&apos;s Journey</span>
+                <span>Evie&apos;s Journey</span>
                 <strong>
                   {challengeIndex + 1}/{challenges.length}
                 </strong>
