@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, type FormEvent, useEffect, useMemo, useState } from "react";
 
 type Challenge = {
   word: string;
@@ -18,8 +17,15 @@ type Gift = {
   emoji: string;
 };
 
+type PlayerProgress = {
+  level: number;
+  score: number;
+  earnedGifts: Gift[];
+};
+
 const CHALLENGE_COUNT = 10;
 const MAX_LEVEL = 10;
+const PLAYER_PROGRESS_KEY = "princess-word-quest-players";
 
 const gifts: Gift[] = [
   { name: "crown", emoji: "👑" },
@@ -646,6 +652,50 @@ function speak(text: string) {
   window.speechSynthesis.speak(utterance);
 }
 
+function normalizePlayerName(name: string) {
+  return name.trim().replace(/\s+/g, " ");
+}
+
+function getStoredPlayers() {
+  try {
+    return JSON.parse(window.localStorage.getItem(PLAYER_PROGRESS_KEY) ?? "{}") as Record<
+      string,
+      PlayerProgress
+    >;
+  } catch {
+    return {};
+  }
+}
+
+function getDefaultProgress(): PlayerProgress {
+  return {
+    level: 1,
+    score: 0,
+    earnedGifts: [],
+  };
+}
+
+function getStoredPlayerProgress(playerName: string) {
+  const players = getStoredPlayers();
+  return players[playerName] ?? null;
+}
+
+function playerExists(playerName: string) {
+  return Boolean(getStoredPlayerProgress(playerName));
+}
+
+function savePlayerProgress(playerName: string, progress: PlayerProgress) {
+  const players = getStoredPlayers();
+  players[playerName] = progress;
+  window.localStorage.setItem(PLAYER_PROGRESS_KEY, JSON.stringify(players));
+}
+
+function getPlayerAvatar(playerName: string | null) {
+  return normalizePlayerName(playerName ?? "").toLowerCase() === "harrison"
+    ? "/harrison.png"
+    : "/princess.png";
+}
+
 export default function Home() {
   const [challenges, setChallenges] = useState<Challenge[]>(() =>
     challengeBank.slice(0, CHALLENGE_COUNT),
@@ -661,14 +711,32 @@ export default function Home() {
   const [successBurst, setSuccessBurst] = useState(0);
   const [earnedGifts, setEarnedGifts] = useState<Gift[]>([]);
   const [awardedGift, setAwardedGift] = useState<Gift | null>(null);
+  const [playerName, setPlayerName] = useState<string | null>(null);
+  const [loginName, setLoginName] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [authMode, setAuthMode] = useState<"login" | "create">("login");
+  const [playerLoaded, setPlayerLoaded] = useState(false);
 
   useEffect(() => {
     const randomizeAfterHydration = window.setTimeout(() => {
       setChallenges(createChallengeSet());
+      setPlayerLoaded(true);
     }, 0);
 
     return () => window.clearTimeout(randomizeAfterHydration);
   }, []);
+
+  useEffect(() => {
+    if (!playerLoaded || !playerName) {
+      return;
+    }
+
+    savePlayerProgress(playerName, {
+      level,
+      score,
+      earnedGifts,
+    });
+  }, [earnedGifts, level, playerLoaded, playerName, score]);
 
   const challenge = challenges[challengeIndex];
   const correctLetter = challenge.word[challenge.missingIndex];
@@ -695,6 +763,7 @@ export default function Home() {
     gameComplete && awardedGift && !earnedGifts.includes(awardedGift)
       ? [...earnedGifts, awardedGift]
       : earnedGifts;
+  const playerAvatar = getPlayerAvatar(playerName);
 
   function chooseLetter(letter: string) {
     if (isCorrect) {
@@ -742,6 +811,61 @@ export default function Home() {
     setShowWord(false);
   }
 
+  function applyPlayerProgress(name: string, progress: PlayerProgress) {
+    setPlayerName(name);
+    setLoginName(name);
+    setLoginError("");
+    setAuthMode("login");
+    setLevel(Math.min(Math.max(progress.level ?? 1, 1), MAX_LEVEL));
+    setScore(Math.max(progress.score ?? 0, 0));
+    setEarnedGifts(
+      (progress.earnedGifts ?? []).filter((gift) => gifts.some(({ name }) => name === gift.name)),
+    );
+    setChallengeIndex(0);
+    setSelectedLetter(null);
+    setShowWord(false);
+    setGameComplete(false);
+    setCompletedLevel(null);
+    setAwardedGift(null);
+    setSuccessBurst(0);
+  }
+
+  function loginPlayer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const normalizedName = normalizePlayerName(loginName);
+
+    if (!normalizedName) {
+      return;
+    }
+
+    const progress = getStoredPlayerProgress(normalizedName);
+
+    if (!progress) {
+      setLoginError(`Player "${normalizedName}" does not exist. Choose Create Player to make one.`);
+      return;
+    }
+
+    applyPlayerProgress(normalizedName, progress);
+  }
+
+  function createPlayer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const normalizedName = normalizePlayerName(loginName);
+
+    if (!normalizedName) {
+      return;
+    }
+
+    if (playerExists(normalizedName)) {
+      setLoginError(`Player "${normalizedName}" already exists. Press Start quest to log in.`);
+      return;
+    }
+
+    const progress = getDefaultProgress();
+    savePlayerProgress(normalizedName, progress);
+    applyPlayerProgress(normalizedName, progress);
+  }
+
   function startNextQuest() {
     setChallenges(createChallengeSet());
     setChallengeIndex(0);
@@ -751,6 +875,132 @@ export default function Home() {
     setCompletedLevel(null);
     setAwardedGift(null);
     setSuccessBurst(0);
+  }
+
+  function logOutPlayer() {
+    setPlayerName(null);
+    setLoginName("");
+    setLoginError("");
+    setAuthMode("login");
+    setLevel(1);
+    setCompletedLevel(null);
+    setChallengeIndex(0);
+    setSelectedLetter(null);
+    setScore(0);
+    setStreak(0);
+    setShowWord(false);
+    setGameComplete(false);
+    setSuccessBurst(0);
+    setEarnedGifts([]);
+    setAwardedGift(null);
+    setChallenges(createChallengeSet());
+  }
+
+  if (!playerLoaded) {
+    return (
+      <main className="game-shell login-shell">
+        <section className="login-card">
+          <p className="eyebrow">Princess Land Spelling Quest</p>
+          <h1 className="sparkle-title" id="game-title">
+            Loading your quest
+          </h1>
+        </section>
+      </main>
+    );
+  }
+
+  if (!playerName && authMode === "create") {
+    return (
+      <main className="game-shell login-shell">
+        <section className="login-card" aria-labelledby="create-player-title">
+          <p className="eyebrow">Create Player</p>
+          <h1 className="sparkle-title" id="create-player-title">
+            Start a new princess quest
+          </h1>
+          <p className="intro">Choose a player name to save your stars and gifts on this device.</p>
+          <form className="login-form" onSubmit={createPlayer}>
+            <label htmlFor="new-player-name">Player name</label>
+            <input
+              autoComplete="given-name"
+              id="new-player-name"
+              maxLength={24}
+              onChange={(event) => {
+                setLoginName(event.target.value);
+                setLoginError("");
+              }}
+              placeholder="Player Name"
+              type="text"
+              value={loginName}
+            />
+            {loginError && (
+              <p className="login-error" role="alert">
+                {loginError}
+              </p>
+            )}
+            <button className="primary-button" disabled={!normalizePlayerName(loginName)} type="submit">
+              Create Player
+            </button>
+            <button
+              className="create-player-link"
+              onClick={() => {
+                setAuthMode("login");
+                setLoginError("");
+              }}
+              type="button"
+            >
+              Log in
+            </button>
+          </form>
+        </section>
+      </main>
+    );
+  }
+
+  if (!playerName) {
+    return (
+      <main className="game-shell login-shell">
+        <section className="login-card" aria-labelledby="login-title">
+          <p className="eyebrow">Player Login</p>
+          <h1 className="sparkle-title" id="login-title">
+            Save the Unicorn by unlocking castle words
+          </h1>
+          <p className="intro">Enter your player name to load your saved score and gifts.</p>
+          <form className="login-form" onSubmit={loginPlayer}>
+            <label htmlFor="player-name">Player name</label>
+            <input
+              autoComplete="given-name"
+              id="player-name"
+              maxLength={24}
+              onChange={(event) => {
+                setLoginName(event.target.value);
+                setLoginError("");
+              }}
+              placeholder="Player Name"
+              type="text"
+              value={loginName}
+            />
+            {loginError && (
+              <p className="login-error" role="alert">
+                {loginError}
+              </p>
+            )}
+            <button className="primary-button" disabled={!normalizePlayerName(loginName)} type="submit">
+              Start quest
+            </button>
+            <button
+              className="create-player-link"
+              onClick={() => {
+                setAuthMode("create");
+                setLoginError("");
+              }}
+              type="button"
+            >
+              Create Player
+            </button>
+          </form>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -764,24 +1014,24 @@ export default function Home() {
         </div>
 
         <div className="hero-copy">
-          <Link
+          <button
             className="reset-link"
-            href="/"
-            onClick={(event) => {
-              event.preventDefault();
-              window.location.reload();
-            }}
+            onClick={logOutPlayer}
+            type="button"
           >
-            RESET
-          </Link>
+            Log out
+          </button>
           <p className="eyebrow">Everette&apos;s Princess Land Spelling Quest</p>
+          <p className="player-badge">
+            Player: <strong>{playerName}</strong>
+          </p>
           <h1 className="sparkle-title" id="game-title">
             <span aria-hidden="true">✦</span>
             Save the Unicorn by unlocking castle words
             <span aria-hidden="true">✦</span>
           </h1>
           <p className="intro">
-            It is up to you Evie to help save the Unicorn and unlock the castle words. You can do it!
+            It is up to you {playerName} to help save the Unicorn and unlock the castle words. You can do it!
           </p>
         </div>
 
@@ -831,10 +1081,10 @@ export default function Home() {
               <span className="reunion-unicorn">🦄</span>
               <span className="reunion-heart">💖</span>
               <Image
-                alt="Princess"
+                alt={`${playerName} profile`}
                 className="reunion-princess-image"
                 height={160}
-                src="/princess-current.png"
+                src={playerAvatar}
                 width={160}
               />
             </div>
@@ -916,21 +1166,21 @@ export default function Home() {
               </div>
             </div>
             <Image
-              alt="Princess waiting by the castle"
+              alt={`${playerName} waiting by the castle`}
               className="princess-image"
               height={160}
               priority
-              src="/princess-current.png"
+              src={playerAvatar}
               width={160}
             />
             <div className="scene-progress-arrow" style={progressStyle}>
               <span className="scene-progress-line">
                 <span className="scene-progress-fill" />
                 <Image
-                  alt="Princess progress marker"
+                  alt={`${playerName} progress marker`}
                   className="scene-progress-marker"
                   height={42}
-                  src="/princess-current.png"
+                  src={playerAvatar}
                   width={42}
                 />
               </span>
@@ -966,7 +1216,7 @@ export default function Home() {
 
             <div className="quest-progress" style={progressStyle}>
               <div className="progress-label">
-                <span>Evie&apos;s Journey</span>
+                <span>{playerName}&apos;s Journey</span>
                 <strong>
                   {challengeIndex + 1}/{challenges.length}
                 </strong>
@@ -982,10 +1232,10 @@ export default function Home() {
                 <span className="progress-path">
                   <span className="progress-fill" />
                   <Image
-                    alt="Princess progress marker"
+                    alt={`${playerName} progress marker`}
                     className="progress-princess-marker"
                     height={32}
-                    src="/princess-current.png"
+                    src={playerAvatar}
                     width={32}
                   />
                 </span>
