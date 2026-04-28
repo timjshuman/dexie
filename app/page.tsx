@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { type CSSProperties, useEffect, useMemo, useState } from "react";
 
 type Challenge = {
@@ -767,6 +768,16 @@ export default function Home() {
         </div>
 
         <div className="hero-copy">
+          <Link
+            className="reset-link"
+            href="/"
+            onClick={(event) => {
+              event.preventDefault();
+              window.location.reload();
+            }}
+          >
+            RESET
+          </Link>
           <p className="eyebrow">Everette&apos;s Princess Land Spelling Quest</p>
           <h1 className="sparkle-title" id="game-title">
             <span aria-hidden="true">✦</span>
