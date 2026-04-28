@@ -854,6 +854,10 @@ h1 {
 }
 
 .word-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.14em;
   margin: 14px 0 10px;
   border: 3px solid rgba(123, 97, 255, 0.18);
   border-radius: 20px;
@@ -868,6 +872,20 @@ h1 {
   text-align: center;
   text-transform: lowercase;
   white-space: nowrap;
+}
+
+.word-letter {
+  display: inline-grid;
+  min-width: 0.74em;
+  place-items: center;
+}
+
+.word-letter.needed-letter {
+  border-radius: 16px;
+  color: #ffffff;
+  background: linear-gradient(180deg, var(--pink), var(--purple));
+  box-shadow: 0 10px 20px rgba(123, 97, 255, 0.28);
+  animation: needed-letter-bounce 850ms ease-in-out infinite;
 }
 
 .prompt {
@@ -927,6 +945,12 @@ h1 {
 .letter-button.incorrect {
   background: linear-gradient(180deg, #fff5f5, #ffc0c0);
   box-shadow: 0 12px 0 #d67070, 0 18px 30px rgba(188, 78, 78, 0.2);
+}
+
+.letter-button.hint {
+  background: linear-gradient(180deg, #fff8d9, #ffd66b);
+  box-shadow: 0 12px 0 #d8a12d, 0 18px 30px rgba(255, 166, 0, 0.24);
+  animation: needed-letter-bounce 850ms ease-in-out infinite;
 }
 
 .feedback {
@@ -1287,6 +1311,17 @@ h1 {
 
   45% {
     transform: scale(1.18);
+  }
+}
+
+@keyframes needed-letter-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  45% {
+    transform: translateY(-8px) scale(1.12);
   }
 }
 

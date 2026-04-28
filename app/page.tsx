@@ -697,7 +697,7 @@ export default function Home() {
       : earnedGifts;
 
   function chooseLetter(letter: string) {
-    if (selectedLetter) {
+    if (isCorrect) {
       return;
     }
 
@@ -740,10 +740,6 @@ export default function Home() {
     setChallengeIndex((current) => (current + 1) % challenges.length);
     setSelectedLetter(null);
     setShowWord(false);
-  }
-
-  function tryAgain() {
-    setSelectedLetter(null);
   }
 
   function startNextQuest() {
@@ -1000,7 +996,19 @@ export default function Home() {
             </div>
 
             <div className="word-display" aria-label={`Word puzzle: ${displayWord}`}>
-              {displayWord}
+              {challenge.word.split("").map((letter, index) => {
+                const isMissingLetter = index === challenge.missingIndex;
+                const shouldHintLetter = showWord && isMissingLetter && !isCorrect;
+
+                return (
+                  <span
+                    className={`word-letter ${shouldHintLetter ? "needed-letter" : ""}`}
+                    key={`${challenge.word}-${letter}-${index}`}
+                  >
+                    {isMissingLetter && !showWord ? "_" : letter}
+                  </span>
+                );
+              })}
             </div>
 
             <p className="prompt">{challenge.prompt}</p>
@@ -1013,11 +1021,13 @@ export default function Home() {
                       ? "correct"
                       : "incorrect"
                     : "";
+                const hintState =
+                  showWord && !isCorrect && letter === correctLetter ? "hint" : "";
 
                 return (
                   <button
-                    className={`letter-button ${buttonState}`}
-                    disabled={Boolean(selectedLetter)}
+                    className={`letter-button ${buttonState} ${hintState}`}
+                    disabled={isCorrect}
                     key={letter}
                     onClick={() => chooseLetter(letter)}
                     type="button"
@@ -1062,18 +1072,9 @@ export default function Home() {
               >
                 Show word
               </button>
-              {isCorrect ? (
+              {isCorrect && (
                 <button className="primary-button" onClick={nextChallenge} type="button">
                   {isFinalChallenge ? "Finish quest" : "Next quest"}
-                </button>
-              ) : (
-                <button
-                  className="primary-button"
-                  disabled={!selectedLetter}
-                  onClick={tryAgain}
-                  type="button"
-                >
-                  Try again
                 </button>
               )}
             </div>
