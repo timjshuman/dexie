@@ -691,9 +691,17 @@ function savePlayerProgress(playerName: string, progress: PlayerProgress) {
 }
 
 function getPlayerAvatar(playerName: string | null) {
-  return normalizePlayerName(playerName ?? "").toLowerCase() === "harrison"
-    ? "/harrison.png"
-    : "/princess.png";
+  const normalizedName = normalizePlayerName(playerName ?? "").toLowerCase();
+
+  if (normalizedName === "evie") {
+    return "/princess.png";
+  }
+
+  if (normalizedName === "harrison") {
+    return "/harrison.png";
+  }
+
+  return "/default.png";
 }
 
 export default function Home() {
