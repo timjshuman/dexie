@@ -1022,7 +1022,9 @@ export default function Home() {
                       : "incorrect"
                     : "";
                 const hintState =
-                  showWord && !isCorrect && letter === correctLetter ? "hint" : "";
+                  (showWord || Boolean(selectedLetter)) && !isCorrect && letter === correctLetter
+                    ? "hint"
+                    : "";
 
                 return (
                   <button
