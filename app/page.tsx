@@ -29,9 +29,9 @@ const PLAYER_PROGRESS_KEY = "princess-word-quest-players";
 
 const gifts: Gift[] = [
   { name: "crown", emoji: "👑" },
-  { name: "dress", emoji: "👗" },
   { name: "ring", emoji: "💍" },
   { name: "bracelet", emoji: "📿" },
+  { name: "dress", emoji: "👗" },
 ];
 
 const baseChallengeBank: Challenge[] = [
@@ -621,15 +621,10 @@ function createChallengeSet() {
   }));
 }
 
-function getRandomGift(earnedGifts: Gift[]) {
+function getNextGift(earnedGifts: Gift[]) {
   const earnedGiftNames = new Set(earnedGifts.map((gift) => gift.name));
-  const availableGifts = gifts.filter((gift) => !earnedGiftNames.has(gift.name));
 
-  if (availableGifts.length === 0) {
-    return null;
-  }
-
-  return availableGifts[Math.floor(Math.random() * availableGifts.length)];
+  return gifts.find((gift) => !earnedGiftNames.has(gift.name)) ?? null;
 }
 
 const praise = [
@@ -694,7 +689,7 @@ function getPlayerAvatar(playerName: string | null) {
   const normalizedName = normalizePlayerName(playerName ?? "").toLowerCase();
 
   if (normalizedName === "evie") {
-    return "/princess.png";
+    return "/princess.png?v=20260430";
   }
 
   if (normalizedName === "harrison") {
@@ -724,6 +719,8 @@ export default function Home() {
   const [loginError, setLoginError] = useState("");
   const [authMode, setAuthMode] = useState<"login" | "create">("login");
   const [playerLoaded, setPlayerLoaded] = useState(false);
+  const [isAvatarPreviewOpen, setIsAvatarPreviewOpen] = useState(false);
+  const [isGiftPreviewOpen, setIsGiftPreviewOpen] = useState(false);
 
   useEffect(() => {
     const randomizeAfterHydration = window.setTimeout(() => {
@@ -771,7 +768,24 @@ export default function Home() {
     gameComplete && awardedGift && !earnedGifts.includes(awardedGift)
       ? [...earnedGifts, awardedGift]
       : earnedGifts;
-  const playerAvatar = getPlayerAvatar(playerName);
+  const hasCrownGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "crown");
+  const hasRingGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "ring");
+  const hasBraceletGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "bracelet");
+  const hasDressGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "dress");
+  const isEvie = normalizePlayerName(playerName ?? "").toLowerCase() === "evie";
+  const hasReachedLevelThree = level >= 3;
+  const basePlayerAvatar = getPlayerAvatar(playerName);
+  const playerAvatar =
+    isEvie && hasCrownGift && hasRingGift && hasBraceletGift && hasDressGift
+      ? "/princess_crown_ring_bracelet_dress.png"
+      : isEvie && hasCrownGift && hasRingGift && hasBraceletGift
+      ? "/princess_crown_ring_bracelet.png"
+      : isEvie && hasReachedLevelThree
+      ? "/princess_crown_ring.png"
+      : isEvie && hasCrownGift
+        ? "/princess_crown.png"
+        : basePlayerAvatar;
+  const progressMarkerAvatar = playerAvatar;
 
   function chooseLetter(letter: string) {
     if (isCorrect) {
@@ -795,7 +809,7 @@ export default function Home() {
   function nextChallenge() {
     if (isFinalChallenge) {
       const nextLevel = Math.min(level + 1, MAX_LEVEL);
-      const gift = getRandomGift(earnedGifts);
+      const gift = getNextGift(earnedGifts);
 
       setCompletedLevel(level);
       setLevel(nextLevel);
@@ -804,6 +818,7 @@ export default function Home() {
         setEarnedGifts((current) => [...current, gift]);
       }
       setGameComplete(true);
+      setIsAvatarPreviewOpen(true);
       speak(
         gift
           ? nextLevel > level
@@ -901,6 +916,31 @@ export default function Home() {
     setSuccessBurst(0);
     setEarnedGifts([]);
     setAwardedGift(null);
+    setIsAvatarPreviewOpen(false);
+    setIsGiftPreviewOpen(false);
+    setChallenges(createChallengeSet());
+  }
+
+  function restartPlayerProgress() {
+    if (!playerName) {
+      return;
+    }
+
+    const progress = getDefaultProgress();
+    savePlayerProgress(playerName, progress);
+    setLevel(progress.level);
+    setCompletedLevel(null);
+    setChallengeIndex(0);
+    setSelectedLetter(null);
+    setScore(progress.score);
+    setStreak(0);
+    setShowWord(false);
+    setGameComplete(false);
+    setSuccessBurst(0);
+    setEarnedGifts(progress.earnedGifts);
+    setAwardedGift(null);
+    setIsAvatarPreviewOpen(false);
+    setIsGiftPreviewOpen(false);
     setChallenges(createChallengeSet());
   }
 
@@ -1022,13 +1062,22 @@ export default function Home() {
         </div>
 
         <div className="hero-copy">
-          <button
-            className="reset-link"
-            onClick={logOutPlayer}
-            type="button"
-          >
-            Log out
-          </button>
+          <div className="session-actions">
+            <button
+              className="reset-link"
+              onClick={logOutPlayer}
+              type="button"
+            >
+              Log out
+            </button>
+            <button
+              className="reset-link"
+              onClick={restartPlayerProgress}
+              type="button"
+            >
+              Restart
+            </button>
+          </div>
           <p className="eyebrow">Everette&apos;s Princess Land Spelling Quest</p>
           <p className="player-badge">
             Player: <strong>{playerName}</strong>
@@ -1056,7 +1105,12 @@ export default function Home() {
             <span>Streak</span>
             <strong>{streak}</strong>
           </div>
-          <div className="gift-score">
+          <button
+            aria-label={`Show earned gifts. ${displayedGifts.length} gifts achieved.`}
+            className="gift-score gift-score-button"
+            onClick={() => setIsGiftPreviewOpen(true)}
+            type="button"
+          >
             <span>Gifts</span>
             <strong>{displayedGifts.length}</strong>
             <small aria-label="Earned gifts">
@@ -1068,7 +1122,7 @@ export default function Home() {
                   ))
                 : "None yet"}
             </small>
-          </div>
+          </button>
         </div>
       </section>
 
@@ -1081,20 +1135,27 @@ export default function Home() {
             <span className="firework firework-four" />
           </div>
 
-          <div className="reunion-scene" aria-hidden="true">
+          <div className="reunion-scene">
             <span className="reunion-sparkle sparkle-a">✦</span>
             <span className="reunion-sparkle sparkle-b">✧</span>
             <div className="reunion-castle">🏰</div>
             <div className="reunion-characters">
               <span className="reunion-unicorn">🦄</span>
               <span className="reunion-heart">💖</span>
-              <Image
-                alt={`${playerName} profile`}
-                className="reunion-princess-image"
-                height={160}
-                src={playerAvatar}
-                width={160}
-              />
+              <button
+                aria-label={`Show full size avatar for ${playerName}`}
+                className="avatar-preview-button reunion-princess-button"
+                onClick={() => setIsAvatarPreviewOpen(true)}
+                type="button"
+              >
+                <Image
+                  alt={`${playerName} profile`}
+                  className="reunion-princess-image"
+                  height={160}
+                  src={playerAvatar}
+                  width={160}
+                />
+              </button>
             </div>
           </div>
 
@@ -1144,7 +1205,7 @@ export default function Home() {
         </section>
       ) : (
         <section className="quest-card" aria-live="polite">
-          <div className="scene" aria-hidden="true">
+          <div className="scene">
             <div className="castle">
               <div className="castle-wing left-wing">
                 <span className="wing-window" />
@@ -1173,14 +1234,21 @@ export default function Home() {
                 <div className="castle-gate" />
               </div>
             </div>
-            <Image
-              alt={`${playerName} waiting by the castle`}
-              className="princess-image"
-              height={160}
-              priority
-              src={playerAvatar}
-              width={160}
-            />
+            <button
+              aria-label={`Show full size avatar for ${playerName}`}
+              className="avatar-preview-button princess-image"
+              onClick={() => setIsAvatarPreviewOpen(true)}
+              type="button"
+            >
+              <Image
+                alt={`${playerName} waiting by the castle`}
+                className="avatar-preview-thumbnail"
+                height={160}
+                priority
+                src={playerAvatar}
+                width={160}
+              />
+            </button>
             <div className="scene-progress-arrow" style={progressStyle}>
               <span className="scene-progress-line">
                 <span className="scene-progress-fill" />
@@ -1188,7 +1256,7 @@ export default function Home() {
                   alt={`${playerName} progress marker`}
                   className="scene-progress-marker"
                   height={42}
-                  src={playerAvatar}
+                  src={progressMarkerAvatar}
                   width={42}
                 />
               </span>
@@ -1243,7 +1311,7 @@ export default function Home() {
                     alt={`${playerName} progress marker`}
                     className="progress-princess-marker"
                     height={32}
-                    src={playerAvatar}
+                    src={progressMarkerAvatar}
                     width={32}
                   />
                 </span>
@@ -1342,6 +1410,64 @@ export default function Home() {
         </section>
       )}
 
+      {isAvatarPreviewOpen && (
+        <div
+          aria-labelledby="avatar-preview-title"
+          aria-modal="true"
+          className="avatar-preview-overlay"
+          role="dialog"
+        >
+          <div className="avatar-preview-card">
+            <h2 id="avatar-preview-title">{playerName}&apos;s Avatar</h2>
+            <Image
+              alt={`${playerName} full size avatar`}
+              className="avatar-preview-full"
+              height={640}
+              priority
+              src={playerAvatar}
+              width={640}
+            />
+            <button
+              className="primary-button avatar-preview-close"
+              onClick={() => setIsAvatarPreviewOpen(false)}
+              type="button"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      {isGiftPreviewOpen && (
+        <div
+          aria-labelledby="gift-preview-title"
+          aria-modal="true"
+          className="avatar-preview-overlay"
+          role="dialog"
+        >
+          <div className="avatar-preview-card gift-preview-card">
+            <h2 id="gift-preview-title">{playerName}&apos;s Gifts</h2>
+            {displayedGifts.length > 0 ? (
+              <div className="gift-preview-list" aria-label="Achieved gifts">
+                {displayedGifts.map((gift, index) => (
+                  <div className="gift-preview-item" key={`${gift.name}-${index}`}>
+                    <span aria-hidden="true">{gift.emoji}</span>
+                    <strong>{gift.name}</strong>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="gift-preview-empty">No gifts achieved yet.</p>
+            )}
+            <button
+              className="primary-button avatar-preview-close"
+              onClick={() => setIsGiftPreviewOpen(false)}
+              type="button"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
