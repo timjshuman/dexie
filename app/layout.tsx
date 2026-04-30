@@ -32,7 +32,8 @@ const siteOrigin = getSiteOrigin();
 
 const OG_IMAGE_ALT = "Everette's Princess Land Spelling Quest game preview";
 
-const ogImageAbsolute = `${siteOrigin.origin}/opengraph-image`;
+/** Static JPEG (~1200×627) works reliably with LinkedIn and other crawlers; dynamic OG routes sometimes fail preview. */
+const ogImageAbsolute = `${siteOrigin.origin}/og-share.jpg`;
 
 export const metadata: Metadata = {
   metadataBase: siteOrigin,
@@ -50,7 +51,8 @@ export const metadata: Metadata = {
       {
         url: ogImageAbsolute,
         width: 1200,
-        height: 630,
+        height: 627,
+        type: "image/jpeg",
         alt: OG_IMAGE_ALT,
       },
     ],
