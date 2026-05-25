@@ -34,327 +34,47 @@ const gifts: Gift[] = [
   { name: "dress", emoji: "👗" },
 ];
 
-const baseChallengeBank: Challenge[] = [
-  {
-    word: "crown",
-    clue: "A princess wears it on her head.",
-    emoji: "👑",
-    prompt: "Pick the missing sound in c r _ w n.",
-    missingIndex: 2,
-    choices: ["o", "a", "u"],
-  },
-  {
-    word: "castle",
-    clue: "A tall home with towers and flags.",
-    emoji: "🏰",
-    prompt: "Pick the missing sound in c a s _ l e.",
-    missingIndex: 3,
-    choices: ["t", "d", "p"],
-  },
-  {
-    word: "magic",
-    clue: "A sparkle spell from a fairy wand.",
-    emoji: "✨",
-    prompt: "Pick the missing sound in m a _ i c.",
-    missingIndex: 2,
-    choices: ["g", "j", "k"],
-  },
-  {
-    word: "unicorn",
-    clue: "A gentle horse with one shining horn.",
-    emoji: "🦄",
-    prompt: "Pick the missing sound in u n i _ o r n.",
-    missingIndex: 3,
-    choices: ["c", "k", "s"],
-  },
-  {
-    word: "garden",
-    clue: "A flowery place outside the palace.",
-    emoji: "🌷",
-    prompt: "Pick the missing sound in g a r _ e n.",
-    missingIndex: 3,
-    choices: ["d", "b", "p"],
-  },
-  {
-    word: "dragon",
-    clue: "A friendly fire-breather who guards treasure.",
-    emoji: "🐉",
-    prompt: "Pick the missing sound in d r a _ o n.",
-    missingIndex: 3,
-    choices: ["g", "j", "q"],
-  },
-  {
-    word: "fairy",
-    clue: "A tiny helper with wings and a wand.",
-    emoji: "🧚",
-    prompt: "Pick the missing sound in f a i _ y.",
-    missingIndex: 3,
-    choices: ["r", "l", "n"],
-  },
-  {
-    word: "jewel",
-    clue: "A shiny gem in the royal treasure box.",
-    emoji: "💎",
-    prompt: "Pick the missing sound in j e _ e l.",
-    missingIndex: 2,
-    choices: ["w", "v", "y"],
-  },
-  {
-    word: "royal",
-    clue: "A word for kings, queens, and princesses.",
-    emoji: "🛡️",
-    prompt: "Pick the missing sound in r o _ a l.",
-    missingIndex: 2,
-    choices: ["y", "i", "e"],
-  },
-  {
-    word: "sparkle",
-    clue: "A bright twinkle from unicorn magic.",
-    emoji: "🌟",
-    prompt: "Pick the missing sound in s p a r _ l e.",
-    missingIndex: 4,
-    choices: ["k", "c", "g"],
-  },
-  {
-    word: "palace",
-    clue: "A grand royal home with beautiful rooms.",
-    emoji: "🏯",
-    prompt: "Pick the missing sound in p a l a _ e.",
-    missingIndex: 4,
-    choices: ["c", "s", "z"],
-  },
-  {
-    word: "ribbon",
-    clue: "A pretty bow for a princess braid.",
-    emoji: "🎀",
-    prompt: "Pick the missing sound in r i _ b o n.",
-    missingIndex: 2,
-    choices: ["b", "p", "d"],
-  },
-  {
-    word: "flower",
-    clue: "A colorful bloom in the royal garden.",
-    emoji: "🌸",
-    prompt: "Pick the missing sound in f l o _ e r.",
-    missingIndex: 3,
-    choices: ["w", "v", "r"],
-  },
-  {
-    word: "bridge",
-    clue: "A path over the sparkling castle river.",
-    emoji: "🌉",
-    prompt: "Pick the missing sound in b r i _ g e.",
-    missingIndex: 3,
-    choices: ["d", "t", "b"],
-  },
-  {
-    word: "mirror",
-    clue: "A shiny glass that shows a princess smile.",
-    emoji: "🪞",
-    prompt: "Pick the missing sound in m i _ r o r.",
-    missingIndex: 2,
-    choices: ["r", "l", "n"],
-  },
-  {
-    word: "velvet",
-    clue: "A soft royal fabric for a cape.",
-    emoji: "🧵",
-    prompt: "Pick the missing sound in v e l _ e t.",
-    missingIndex: 3,
-    choices: ["v", "f", "b"],
-  },
-  {
-    word: "forest",
-    clue: "A leafy place where unicorns wander.",
-    emoji: "🌲",
-    prompt: "Pick the missing sound in f o r _ s t.",
-    missingIndex: 3,
-    choices: ["e", "a", "i"],
-  },
-  {
-    word: "golden",
-    clue: "A bright color for crowns and treasure.",
-    emoji: "🪙",
-    prompt: "Pick the missing sound in g o l _ e n.",
-    missingIndex: 3,
-    choices: ["d", "t", "b"],
-  },
-  {
-    word: "rainbow",
-    clue: "A colorful arc above the unicorn meadow.",
-    emoji: "🌈",
-    prompt: "Pick the missing sound in r a i n _ o w.",
-    missingIndex: 4,
-    choices: ["b", "p", "d"],
-  },
-  {
-    word: "princess",
-    clue: "A kind royal friend in the castle.",
-    emoji: "👸",
-    prompt: "Pick the missing sound in p r i n _ e s s.",
-    missingIndex: 4,
-    choices: ["c", "s", "z"],
-  },
-  {
-    word: "wand",
-    clue: "A magic stick used for gentle spells.",
-    emoji: "🪄",
-    prompt: "Pick the missing sound in w a _ d.",
-    missingIndex: 2,
-    choices: ["n", "m", "r"],
-  },
-  {
-    word: "tiara",
-    clue: "A sparkling crown for a princess.",
-    emoji: "👑",
-    prompt: "Pick the missing sound in t i _ r a.",
-    missingIndex: 2,
-    choices: ["a", "e", "o"],
-  },
-  {
-    word: "gown",
-    clue: "A fancy dress for a royal ball.",
-    emoji: "👗",
-    prompt: "Pick the missing sound in g o _ n.",
-    missingIndex: 2,
-    choices: ["w", "v", "u"],
-  },
-  {
-    word: "carriage",
-    clue: "A royal ride pulled by horses.",
-    emoji: "🎠",
-    prompt: "Pick the missing sound in c a r r _ a g e.",
-    missingIndex: 4,
-    choices: ["i", "e", "y"],
-  },
-  {
-    word: "meadow",
-    clue: "A grassy field where unicorns play.",
-    emoji: "🌼",
-    prompt: "Pick the missing sound in m e a _ o w.",
-    missingIndex: 3,
-    choices: ["d", "t", "b"],
-  },
-  {
-    word: "potion",
-    clue: "A bubbly drink made by a kind wizard.",
-    emoji: "🧪",
-    prompt: "Pick the missing sound in p o _ i o n.",
-    missingIndex: 2,
-    choices: ["t", "d", "p"],
-  },
-  {
-    word: "crystal",
-    clue: "A shiny stone that glows with magic.",
-    emoji: "🔮",
-    prompt: "Pick the missing sound in c r y s _ a l.",
-    missingIndex: 4,
-    choices: ["t", "d", "p"],
-  },
-  {
-    word: "lantern",
-    clue: "A small light for a moonlit castle path.",
-    emoji: "🏮",
-    prompt: "Pick the missing sound in l a n _ e r n.",
-    missingIndex: 3,
-    choices: ["t", "d", "p"],
-  },
-  {
-    word: "swan",
-    clue: "A graceful bird on the palace pond.",
-    emoji: "🦢",
-    prompt: "Pick the missing sound in s _ a n.",
-    missingIndex: 1,
-    choices: ["w", "v", "u"],
-  },
-  {
-    word: "pearl",
-    clue: "A smooth treasure from a seashell.",
-    emoji: "🦪",
-    prompt: "Pick the missing sound in p e _ r l.",
-    missingIndex: 2,
-    choices: ["a", "o", "u"],
-  },
-  {
-    word: "throne",
-    clue: "A special chair for a queen or king.",
-    emoji: "🪑",
-    prompt: "Pick the missing sound in t h r _ n e.",
-    missingIndex: 3,
-    choices: ["o", "a", "e"],
-  },
-  {
-    word: "blossom",
-    clue: "A flower opening in the royal garden.",
-    emoji: "🌺",
-    prompt: "Pick the missing sound in b l o _ s o m.",
-    missingIndex: 3,
-    choices: ["s", "z", "c"],
-  },
-  {
-    word: "star",
-    clue: "A bright light in the night sky.",
-    emoji: "⭐",
-    prompt: "Pick the missing sound in s t _ r.",
-    missingIndex: 2,
-    choices: ["a", "e", "o"],
-  },
-  {
-    word: "wish",
-    clue: "A dream whispered to a wishing star.",
-    emoji: "💫",
-    prompt: "Pick the missing sound in w i _ h.",
-    missingIndex: 2,
-    choices: ["s", "z", "c"],
-  },
-  {
-    word: "queen",
-    clue: "A royal leader who wears a crown.",
-    emoji: "👸",
-    prompt: "Pick the missing sound in q u _ e n.",
-    missingIndex: 2,
-    choices: ["e", "a", "i"],
-  },
-  {
-    word: "king",
-    clue: "A royal leader in the castle.",
-    emoji: "🤴",
-    prompt: "Pick the missing sound in k i _ g.",
-    missingIndex: 2,
-    choices: ["n", "m", "r"],
-  },
-  {
-    word: "pony",
-    clue: "A small horse that trots near the castle.",
-    emoji: "🐴",
-    prompt: "Pick the missing sound in p o _ y.",
-    missingIndex: 2,
-    choices: ["n", "m", "r"],
-  },
-  {
-    word: "spell",
-    clue: "Magic words spoken by a fairy.",
-    emoji: "✨",
-    prompt: "Pick the missing sound in s p _ l l.",
-    missingIndex: 2,
-    choices: ["e", "a", "i"],
-  },
-  {
-    word: "gem",
-    clue: "A tiny jewel in the treasure chest.",
-    emoji: "💎",
-    prompt: "Pick the missing sound in g _ m.",
-    missingIndex: 1,
-    choices: ["e", "a", "i"],
-  },
-  {
-    word: "harp",
-    clue: "A pretty instrument for royal music.",
-    emoji: "🎵",
-    prompt: "Pick the missing sound in h a _ p.",
-    missingIndex: 2,
-    choices: ["r", "l", "n"],
-  },
+const baseChallengeSeeds: ChallengeSeed[] = [
+  { word: "crown", clue: "A princess wears it on her head.", emoji: "👑", missingIndex: 2, choices: ["o", "a", "u"] },
+  { word: "castle", clue: "A tall home with towers and flags.", emoji: "🏰", missingIndex: 3, choices: ["t", "d", "p"] },
+  { word: "magic", clue: "A sparkle spell from a fairy wand.", emoji: "✨", missingIndex: 2, choices: ["g", "j", "k"] },
+  { word: "unicorn", clue: "A gentle horse with one shining horn.", emoji: "🦄", missingIndex: 3, choices: ["c", "k", "s"] },
+  { word: "garden", clue: "A flowery place outside the palace.", emoji: "🌷", missingIndex: 3, choices: ["d", "b", "p"] },
+  { word: "dragon", clue: "A friendly fire-breather who guards treasure.", emoji: "🐉", missingIndex: 3, choices: ["g", "j", "q"] },
+  { word: "fairy", clue: "A tiny helper with wings and a wand.", emoji: "🧚", missingIndex: 3, choices: ["r", "l", "n"] },
+  { word: "jewel", clue: "A shiny gem in the royal treasure box.", emoji: "💎", missingIndex: 2, choices: ["w", "v", "y"] },
+  { word: "royal", clue: "A word for kings, queens, and princesses.", emoji: "🛡️", missingIndex: 2, choices: ["y", "i", "e"] },
+  { word: "sparkle", clue: "A bright twinkle from unicorn magic.", emoji: "🌟", missingIndex: 4, choices: ["k", "c", "g"] },
+  { word: "palace", clue: "A grand royal home with beautiful rooms.", emoji: "🏯", missingIndex: 4, choices: ["c", "s", "z"] },
+  { word: "ribbon", clue: "A pretty bow for a princess braid.", emoji: "🎀", missingIndex: 2, choices: ["b", "p", "d"] },
+  { word: "flower", clue: "A colorful bloom in the royal garden.", emoji: "🌸", missingIndex: 3, choices: ["w", "v", "r"] },
+  { word: "bridge", clue: "A path over the sparkling castle river.", emoji: "🌉", missingIndex: 3, choices: ["d", "t", "b"] },
+  { word: "mirror", clue: "A shiny glass that shows a princess smile.", emoji: "🪞", missingIndex: 2, choices: ["r", "l", "n"] },
+  { word: "velvet", clue: "A soft royal fabric for a cape.", emoji: "🧵", missingIndex: 3, choices: ["v", "f", "b"] },
+  { word: "forest", clue: "A leafy place where unicorns wander.", emoji: "🌲", missingIndex: 3, choices: ["e", "a", "i"] },
+  { word: "golden", clue: "A bright color for crowns and treasure.", emoji: "🪙", missingIndex: 3, choices: ["d", "t", "b"] },
+  { word: "rainbow", clue: "A colorful arc above the unicorn meadow.", emoji: "🌈", missingIndex: 4, choices: ["b", "p", "d"] },
+  { word: "princess", clue: "A kind royal friend in the castle.", emoji: "👸", missingIndex: 4, choices: ["c", "s", "z"] },
+  { word: "wand", clue: "A magic stick used for gentle spells.", emoji: "🪄", missingIndex: 2, choices: ["n", "m", "r"] },
+  { word: "tiara", clue: "A sparkling crown for a princess.", emoji: "👑", missingIndex: 2, choices: ["a", "e", "o"] },
+  { word: "gown", clue: "A fancy dress for a royal ball.", emoji: "👗", missingIndex: 2, choices: ["w", "v", "u"] },
+  { word: "carriage", clue: "A royal ride pulled by horses.", emoji: "🎠", missingIndex: 4, choices: ["i", "e", "y"] },
+  { word: "meadow", clue: "A grassy field where unicorns play.", emoji: "🌼", missingIndex: 3, choices: ["d", "t", "b"] },
+  { word: "potion", clue: "A bubbly drink made by a kind wizard.", emoji: "🧪", missingIndex: 2, choices: ["t", "d", "p"] },
+  { word: "crystal", clue: "A shiny stone that glows with magic.", emoji: "🔮", missingIndex: 4, choices: ["t", "d", "p"] },
+  { word: "lantern", clue: "A small light for a moonlit castle path.", emoji: "🏮", missingIndex: 3, choices: ["t", "d", "p"] },
+  { word: "swan", clue: "A graceful bird on the palace pond.", emoji: "🦢", missingIndex: 1, choices: ["w", "v", "u"] },
+  { word: "pearl", clue: "A smooth treasure from a seashell.", emoji: "🦪", missingIndex: 2, choices: ["a", "o", "u"] },
+  { word: "throne", clue: "A special chair for a queen or king.", emoji: "🪑", missingIndex: 3, choices: ["o", "a", "e"] },
+  { word: "blossom", clue: "A flower opening in the royal garden.", emoji: "🌺", missingIndex: 3, choices: ["s", "z", "c"] },
+  { word: "star", clue: "A bright light in the night sky.", emoji: "⭐", missingIndex: 2, choices: ["a", "e", "o"] },
+  { word: "wish", clue: "A dream whispered to a wishing star.", emoji: "💫", missingIndex: 2, choices: ["s", "z", "c"] },
+  { word: "queen", clue: "A royal leader who wears a crown.", emoji: "👸", missingIndex: 2, choices: ["e", "a", "i"] },
+  { word: "king", clue: "A royal leader in the castle.", emoji: "🤴", missingIndex: 2, choices: ["n", "m", "r"] },
+  { word: "pony", clue: "A small horse that trots near the castle.", emoji: "🐴", missingIndex: 2, choices: ["n", "m", "r"] },
+  { word: "spell", clue: "Magic words spoken by a fairy.", emoji: "✨", missingIndex: 2, choices: ["e", "a", "i"] },
+  { word: "gem", clue: "A tiny jewel in the treasure chest.", emoji: "💎", missingIndex: 1, choices: ["e", "a", "i"] },
+  { word: "harp", clue: "A pretty instrument for royal music.", emoji: "🎵", missingIndex: 2, choices: ["r", "l", "n"] },
 ];
 
 type ChallengeSeed = {
@@ -592,33 +312,25 @@ const additionalChallengeSeeds: ChallengeSeed[] = [
 ];
 
 const challengeBank: Challenge[] = [
-  ...baseChallengeBank,
-  ...additionalChallengeSeeds.map(makeChallenge),
-];
+  ...baseChallengeSeeds,
+  ...additionalChallengeSeeds,
+].map(makeChallenge);
 
-function shuffleLetters(letters: string[]) {
-  const shuffled = [...letters];
+function shuffle<T>(array: T[]): T[] {
+  const result = [...array];
 
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+  for (let index = result.length - 1; index > 0; index -= 1) {
     const randomIndex = Math.floor(Math.random() * (index + 1));
-    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
   }
 
-  return shuffled;
+  return result;
 }
 
 function createChallengeSet() {
-  const shuffled = [...challengeBank];
-
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
-  }
-
-  return shuffled.slice(0, CHALLENGE_COUNT).map((challenge) => ({
-    ...challenge,
-    choices: shuffleLetters(challenge.choices),
-  }));
+  return shuffle(challengeBank)
+    .slice(0, CHALLENGE_COUNT)
+    .map((challenge) => ({ ...challenge, choices: shuffle(challenge.choices) }));
 }
 
 function getNextGift(earnedGifts: Gift[]) {
@@ -685,7 +397,7 @@ function savePlayerProgress(playerName: string, progress: PlayerProgress) {
   window.localStorage.setItem(PLAYER_PROGRESS_KEY, JSON.stringify(players));
 }
 
-function getPlayerAvatar(playerName: string | null) {
+function getBasePlayerAvatar(playerName: string | null) {
   const normalizedName = normalizePlayerName(playerName ?? "").toLowerCase();
 
   if (normalizedName === "evie") {
@@ -697,6 +409,35 @@ function getPlayerAvatar(playerName: string | null) {
   }
 
   return "/default.png";
+}
+
+function getPlayerAvatar(
+  playerName: string | null,
+  level: number,
+  earnedGifts: Gift[],
+): string {
+  const isEvie = normalizePlayerName(playerName ?? "").toLowerCase() === "evie";
+
+  if (!isEvie) {
+    return getBasePlayerAvatar(playerName);
+  }
+
+  const has = (name: string) => earnedGifts.some((g) => g.name.toLowerCase() === name);
+
+  if (has("crown") && has("ring") && has("bracelet") && has("dress")) {
+    return "/princess_crown_ring_bracelet_dress.png";
+  }
+  if (has("crown") && has("ring") && has("bracelet")) {
+    return "/princess_crown_ring_bracelet.png";
+  }
+  if (level >= 3) {
+    return "/princess_crown_ring.png";
+  }
+  if (has("crown")) {
+    return "/princess_crown.png";
+  }
+
+  return getBasePlayerAvatar(playerName);
 }
 
 export default function Home() {
@@ -768,24 +509,7 @@ export default function Home() {
     gameComplete && awardedGift && !earnedGifts.includes(awardedGift)
       ? [...earnedGifts, awardedGift]
       : earnedGifts;
-  const hasCrownGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "crown");
-  const hasRingGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "ring");
-  const hasBraceletGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "bracelet");
-  const hasDressGift = displayedGifts.some((gift) => gift.name.toLowerCase() === "dress");
-  const isEvie = normalizePlayerName(playerName ?? "").toLowerCase() === "evie";
-  const hasReachedLevelThree = level >= 3;
-  const basePlayerAvatar = getPlayerAvatar(playerName);
-  const playerAvatar =
-    isEvie && hasCrownGift && hasRingGift && hasBraceletGift && hasDressGift
-      ? "/princess_crown_ring_bracelet_dress.png"
-      : isEvie && hasCrownGift && hasRingGift && hasBraceletGift
-      ? "/princess_crown_ring_bracelet.png"
-      : isEvie && hasReachedLevelThree
-      ? "/princess_crown_ring.png"
-      : isEvie && hasCrownGift
-        ? "/princess_crown.png"
-        : basePlayerAvatar;
-  const progressMarkerAvatar = playerAvatar;
+  const playerAvatar = getPlayerAvatar(playerName, level, displayedGifts);
 
   function chooseLetter(letter: string) {
     if (isCorrect) {
@@ -1256,7 +980,7 @@ export default function Home() {
                   alt={`${playerName} progress marker`}
                   className="scene-progress-marker"
                   height={42}
-                  src={progressMarkerAvatar}
+                  src={playerAvatar}
                   width={42}
                 />
               </span>
@@ -1311,7 +1035,7 @@ export default function Home() {
                     alt={`${playerName} progress marker`}
                     className="progress-princess-marker"
                     height={32}
-                    src={progressMarkerAvatar}
+                    src={playerAvatar}
                     width={32}
                   />
                 </span>
