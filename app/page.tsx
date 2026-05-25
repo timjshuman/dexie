@@ -26,6 +26,7 @@ type PlayerProgress = {
 const CHALLENGE_COUNT = 10;
 const MAX_LEVEL = 10;
 const PLAYER_PROGRESS_KEY = "princess-word-quest-players";
+const PLAYER_SESSION_KEY = "princess-word-quest-active-player";
 
 const gifts: Gift[] = [
   { name: "crown", emoji: "👑" },
@@ -397,6 +398,23 @@ function savePlayerProgress(playerName: string, progress: PlayerProgress) {
   window.localStorage.setItem(PLAYER_PROGRESS_KEY, JSON.stringify(players));
 }
 
+function getStoredActivePlayerName() {
+  try {
+    const name = window.localStorage.getItem(PLAYER_SESSION_KEY);
+    return name ? normalizePlayerName(name) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveActivePlayerSession(playerName: string) {
+  window.localStorage.setItem(PLAYER_SESSION_KEY, normalizePlayerName(playerName));
+}
+
+function clearActivePlayerSession() {
+  window.localStorage.removeItem(PLAYER_SESSION_KEY);
+}
+
 function getBasePlayerAvatar(playerName: string | null) {
   const normalizedName = normalizePlayerName(playerName ?? "").toLowerCase();
 
@@ -466,6 +484,34 @@ export default function Home() {
   useEffect(() => {
     const randomizeAfterHydration = window.setTimeout(() => {
       setChallenges(createChallengeSet());
+
+      const activePlayerName = getStoredActivePlayerName();
+      if (activePlayerName) {
+        const progress = getStoredPlayerProgress(activePlayerName);
+        if (progress) {
+          setPlayerName(activePlayerName);
+          setLoginName(activePlayerName);
+          setLoginError("");
+          setAuthMode("login");
+          setLevel(Math.min(Math.max(progress.level ?? 1, 1), MAX_LEVEL));
+          setScore(Math.max(progress.score ?? 0, 0));
+          setEarnedGifts(
+            (progress.earnedGifts ?? []).filter((gift) =>
+              gifts.some(({ name }) => name === gift.name),
+            ),
+          );
+          setChallengeIndex(0);
+          setSelectedLetter(null);
+          setShowWord(false);
+          setGameComplete(false);
+          setCompletedLevel(null);
+          setAwardedGift(null);
+          setSuccessBurst(0);
+        } else {
+          clearActivePlayerSession();
+        }
+      }
+
       setPlayerLoaded(true);
     }, 0);
 
@@ -559,6 +605,7 @@ export default function Home() {
   }
 
   function applyPlayerProgress(name: string, progress: PlayerProgress) {
+    saveActivePlayerSession(name);
     setPlayerName(name);
     setLoginName(name);
     setLoginError("");
@@ -625,6 +672,7 @@ export default function Home() {
   }
 
   function logOutPlayer() {
+    clearActivePlayerSession();
     setPlayerName(null);
     setLoginName("");
     setLoginError("");
